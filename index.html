@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ECO-PILOT</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#e9fbf2; --bg2:#e6f0ff;
+  --card:#ffffffee; --accent:#0f8a5f; --accent2:#0b6f9d;
+  --muted:#4f5b63; --glass:rgba(255,255,255,0.7);
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#08323b}
+body{
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));
+  display:flex; align-items:center; justify-content:center; padding:28px; overflow:hidden;
+}
+
+/* subtle animated particle leaves background */
+.particles{position:fixed;inset:0;pointer-events:none;opacity:0.18;background-image:
+  radial-gradient(circle at 15% 20%, rgba(11,111,83,0.06) 0, transparent 18%),
+  radial-gradient(circle at 85% 80%, rgba(11,111,157,0.04) 0, transparent 20%);
+}
+
+/* card */
+.container{
+  width:100%; max-width:980px; border-radius:14px; padding:28px;
+  background:linear-gradient(180deg,var(--card),rgba(255,255,255,0.9));
+  box-shadow:0 18px 50px rgba(6,35,32,0.12); border:1px solid rgba(0,0,0,0.04);
+  position:relative; overflow:visible;
+}
+
+/* header */
+header{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+h1{font-family:Merriweather,serif;font-size:30px;margin:0;color:#053533}
+.subtitle{color:var(--muted);font-size:14px;margin-top:6px}
+
+/* layout */
+.cols{display:grid;grid-template-columns:1fr 420px;gap:22px}
+@media(max-width:920px){.cols{grid-template-columns:1fr} .right{order:2}}
+.card{background:transparent;padding:0}
+
+/* input card */
+.formcard{
+  background:rgba(255,255,255,0.96);border-radius:12px;padding:18px;border:1px solid rgba(6,35,32,0.03);
+  box-shadow:0 6px 20px rgba(6,35,32,0.04);
+}
+label{display:block;font-weight:600;color:#094; margin-top:12px}
+select,input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #e6edf0;background:#fbfeff;font-size:15px}
+.cta{display:inline-block;margin-top:16px;padding:12px 14px;border-radius:12px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:0;font-weight:700;cursor:pointer;box-shadow:0 10px 26px rgba(11,111,157,0.08);transition:transform .18s,box-shadow .18s}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(11,111,157,0.14)}
+
+/* results */
+.resultcard{
+  background:linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,255,255,0.9));
+  border-radius:12px;padding:16px;border:1px solid rgba(6,35,32,0.03); box-shadow:0 8px 26px rgba(6,35,32,0.04);
+  min-height:220px;
+}
+.scorewrap{display:flex;align-items:center;gap:14px}
+.scorebig{
+  font-family:Merriweather,serif;color:var(--accent);font-size:44px;font-weight:700;
+  padding:6px 12px;border-radius:8px;background:linear-gradient(180deg,rgba(15,138,95,0.06),rgba(11,111,157,0.03));
+  box-shadow:0 6px 18px rgba(11,111,157,0.06);
+}
+.scoremeta{color:var(--muted);font-size:14px}
+.score-compare{margin-top:8px;color:#0c4b3f;font-weight:600}
+.emotion{margin-top:8px;color:#a04b2a;font-style:italic}
+
+/* tips */
+.tips{margin-top:12px}
+.tips li{margin:8px 0;color:#0b4236;font-size:14px}
+
+/* product scan */
+.productcard{background:rgba(255,255,255,0.98);border-radius:12px;padding:14px;border:1px solid rgba(6,35,32,0.03)}
+.product-input{display:flex;gap:10px;margin-top:8px}
+.product-input input{flex:1;padding:10px;border-radius:10px;border:1px solid #e6edf0}
+
+/* hologram mock */
+.holo{
+  margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(11,111,157,0.025),rgba(15,138,95,0.02));
+  min-height:80px; position:relative; overflow:visible;
+}
+.holo .spin{width:58px;height:58px;border-radius:8px;background:linear-gradient(90deg,#e6fff3,#e6f7ff);display:inline-block;margin-right:12px;vertical-align:top;box-shadow:0 6px 20px rgba(11,111,157,0.03);transform:rotateY(0)}
+@keyframes spin3d{from{transform:rotateY(0) translateZ(0)}to{transform:rotateY(360deg) translateZ(8px)}}
+.holo .spin.animate{animation:spin3d 2.4s linear infinite}
+
+/* confetti leaves */
+.leaf-confetti{position:fixed;left:50%;top:20%;transform:translateX(-50%);pointer-events:none;z-index:30}
+
+/* small */
+.small-muted{font-size:13px;color:var(--muted);margin-top:6px}
+
+/* animations */
+.fade-in{animation:fadeIn .45s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* accessibility */
+button:focus,select:focus,input:focus{outline:3px solid rgba(11,111,157,0.12);outline-offset:2px}
+</style>
+</head>
+<body>
+  <div class="particles" aria-hidden></div>
+  <div class="container" role="main" aria-labelledby="title">
+    <header>
+      <div style="flex:1">
+        <h1 id="title">ECO-PILOT</h1>
+        <div class="subtitle">Every purchase is a choice. We translate that choice into living impact.</div>
+      </div>
+    </header>
+
+    <div class="cols">
+      <!-- left: form -->
+      <div class="card formcard fade-in" aria-labelledby="formTitle">
+        <div id="formTitle" style="font-weight:700;color:#08323b;margin-bottom:6px">Tell us about your shopping</div>
+
+        <label for="frequency">Shopping frequency</label>
+        <select id="frequency" aria-label="Shopping frequency">
+          <option value="">Choose</option>
+          <option value="rarely">Rarely</option>
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+          <option value="daily">Daily</option>
+        </select>
+
+        <label for="category">Main category</label>
+        <select id="category" aria-label="Main category">
+          <option value="">Choose</option>
+          <option value="fashion">Fashion</option>
+          <option value="electronics">Electronics</option>
+          <option value="groceries">Groceries</option>
+          <option value="homegoods">Home goods</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label for="platform">Shopping platform</label>
+        <select id="platform" aria-label="Shopping platform">
+          <option value="">Choose</option>
+          <option value="amazon">Amazon</option>
+          <option value="flipkart">Flipkart</option>
+          <option value="myntra">Myntra</option>
+          <option value="other">Other</option>
+        </select>
+
+        <button id="calculate-btn" class="cta" aria-live="polite">Calculate Carbon Score</button>
+        <div class="small-muted">Estimates are conservative and framed to be human-understandable. Suggestions are curated by sustainability practitioners.</div>
+      </div>
+
+      <!-- right: results & scan -->
+      <div class="card" style="display:flex;flex-direction:column;gap:16px">
+        <div id="score-result" class="resultcard fade-in" style="display:none">
+          <div class="scorewrap" aria-hidden>
+            <div class="scorebig" aria-hidden><span id="score-number">0.0</span> t/yr</div>
+            <div class="scoremeta">
+              <div id="score-phrase">—</div>
+              <div id="score-compare" class="score-compare">—</div>
+            </div>
+          </div>
+
+          <div id="emotion-line" class="emotion" aria-live="polite"></div>
+          <div id="rank-line" class="small-muted" style="margin-top:8px"></div>
+
+          <h3 style="color:#08323b;margin-top:12px">Actionable suggestions</h3>
+          <ul id="eco-tips" class="tips" aria-live="polite"></ul>
+        </div>
+
+        <div class="productcard fade-in">
+          <label for="product-link">Planning to buy soon? Paste product link</label>
+          <div class="product-input">
+            <input id="product-link" placeholder="https://example.com/product-page" type="text" aria-label="Product link"/>
+            <button id="scan-btn" class="cta">Scan product</button>
+          </div>
+          <div class="small-muted">We show clear, human reasons and 1–2 better alternatives (MVP estimates).</div>
+
+          <div id="eco-pilot-report" style="display:none;margin-top:12px" class="holo" role="region" aria-live="polite">
+            <div style="display:flex;align-items:center">
+              <div class="spin" id="holo-spin" aria-hidden></div>
+              <div style="flex:1">
+                <div class="report-key">Product analysis</div>
+                <div id="product-report" style="margin-top:8px;color:#0b3b37"></div>
+              </div>
+            </div>
+
+            <ul id="product-alternatives" class="report-list"></ul>
+            <div id="carbon-save" style="margin-top:10px;color:#0b6f44;font-weight:700"></div>
+            <div style="margin-top:12px;font-size:13px;color:var(--muted)">Shareable talking point: <span id="talking-point"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- confetti leaf container -->
+  <div class="leaf-confetti" id="leaf-confetti" aria-hidden></div>
+
+<script>
+/* ---------- Data ---------- */
+const frequencyScore = { rarely: 0.6, monthly: 1.8, weekly: 3.2, daily: 5.5 };
+const categoryMultiplier = { fashion: 1.3, electronics: 1.6, groceries: 0.8, homegoods: 1.0, other: 1.0 };
+const platformMultiplier = { amazon: 1.1, flipkart: 1.0, myntra: 1.05, other: 1.0 };
+
+const ALL_TIPS = [
+ "Batch orders into a 3–5 day window to cut packaging and delivery trips.",
+ "Avoid express shipping—overnight air freight inflates emissions significantly.",
+ "When possible, pick local sellers to reduce transport miles.",
+ "Choose products labeled with long-lasting materials rather than fast-fashion items.",
+ "If buying electronics, prefer refurbished models with warranty.",
+ "Repair devices: a repaired phone often has lower footprint than a new mid-range one.",
+ "Choose loose-fill or minimal packaging options at checkout when available.",
+ "Check seller return rates; buy from brands with under 5% returns to avoid reverse logistics.",
+ "For clothes, prefer natural fibers (organic cotton, linen) over synthetic microfibers.",
+ "Use the product’s lifecycle info (repairability) as a selection factor.",
+ "Avoid items with international air freight—look for 'ships from local warehouse'.",
+ "If replacing appliances, look for energy-efficiency ratings (5-star where applicable).",
+ "Buy seasonal produce from nearby farms to reduce food miles.",
+ "Choose concentrated or refillable household products to reduce plastic waste.",
+ "Share or borrow tools and appliances you’ll use rarely.",
+ "Donate or sell unused items instead of throwing them away.",
+ "Avoid single-use items; pick items with multiple functions or reuse designs.",
+ "Look for transparent supply-chain info—brands that publish their logistics data.",
+ "Compare materials: recycled variants often have much lower impact.",
+ "Prefer products with minimal electronic packaging (no single-use chargers, etc.).",
+ "Bundle gifts or orders—fewer shipments reduces per-item footprint.",
+ "If buying for children, choose toys with durable materials and modular parts.",
+ "Consider rental or subscription alternatives for rarely used goods.",
+ "Pick brands with repair programs and spare-part availability.",
+ "For cosmetics, favor refillable packaging options.",
+ "Look for second-hand marketplaces—quality pre-owned is often the lowest-impact option.",
+ "Limit impulse purchases: wait 48 hours and reassess if you really need it.",
+ "When possible, choose products that are certified (B Corp, Fair Trade) for social + environmental checks.",
+ "Check if the brand offsets carbon and how transparent that program is.",
+ "Choose mattresses and furniture with local craftsmanship to cut shipping footprint.",
+ "Prefer low-voltage appliances or those optimized for long life.",
+ "Use concentrated detergents and cold-water wash recommendations to cut household energy.",
+ "If buying packaged food, favor companies using recyclable or compostable packaging.",
+ "Avoid products with frequent firmware updates that force early replacement.",
+ "Splurge on durability instead of replacing cheaply more often.",
+ "Combine errands into one trip instead of multiple short trips.",
+ "Choose steel, glass, or natural materials that are recyclable at end-of-life.",
+ "Ask sellers about end-of-life recycling programs before purchase.",
+ "If buying prints or art, pick digital alternatives where suitable.",
+ "Favor local repair shops for small appliance fixes.",
+ "If the item is a gift, consider experiences instead of physical goods.",
+ "Consider modular products that let you upgrade parts rather than the whole item.",
+ "For home goods, prioritize low-VOC and sustainably sourced materials.",
+ "Buy concentrated cleaners and refill at bulk stations if available.",
+ "Prefer low-wattage, long-life LED lighting for home upgrades.",
+ "If buying clothing, prefer neutral colors that can be mixed and used longer.",
+ "Choose brands transparent about worker conditions and transport methods.",
+ "Opt for shipping consolidation at checkout when multiple items are from same seller."
+];
+
+/* ---------- Helpers ---------- */
+function chooseTips(category){
+  const bias = {
+    fashion:[0,3,8,22,38,45,49],
+    electronics:[4,5,11,23,31,33,36],
+    groceries:[2,12,30,41,17,24,28],
+    homegoods:[9,18,29,32,39,42,44],
+    other:Array.from(Array(ALL_TIPS.length).keys())
+  };
+  let pool = bias[category] || bias.other;
+  // shuffle & take 5
+  for(let i=pool.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1)); [pool[i],pool[j]]=[pool[j],pool[i]];}
+  return pool.slice(0,5).map(i=>ALL_TIPS[i]);
+}
+
+function animateNumber(el, start, end, ms=900){
+  const s = performance.now();
+  (function step(t){
+    const p = Math.min((t-s)/ms,1);
+    const cur = start + (end-start)*p;
+    el.textContent = (Math.round(cur*10)/10).toFixed(1);
+    if(p<1) requestAnimationFrame(step);
+  })(s);
+}
+
+function emotionLineFor(val){
+  val = parseFloat(val);
+  if(val < 2.5) return "Tiny footprint — you're already making gentle choices. That’s like keeping a small sapling alive for years.";
+  if(val < 8) return "Balanced — a few smart moves and you’ll be saving forests. Imagine turning car trips into neighborhood walks.";
+  if(val < 14) return "High — targeted changes will create meaningful impact. This is like swapping many short rides for long, healthy walks.";
+  return "Very high — bold changes needed. This amount of CO₂ could be the difference between a healthy grove and trees lost to drought.";
+}
+
+/* confetti leaf animation */
+function launchLeaves(count=14){
+  const container = document.getElementById('leaf-confetti');
+  container.innerHTML = '';
+  for(let i=0;i<count;i++){
+    const leaf = document.createElement('div');
+    leaf.style.position='absolute';
+    leaf.style.left = (Math.random()*80-40)+'vw';
+    leaf.style.top = '-10vh';
+    leaf.style.pointerEvents='none';
+    leaf.style.opacity = 0.9;
+    leaf.style.transform = `rotate(${Math.random()*360}deg)`;
+    leaf.innerHTML = '<svg width="28" height="18" viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg"><path d="M1 9c6-6 20-8 26-8-6 6-8 18-26 8z" fill="#0f8a5f" /></svg>';
+    container.appendChild(leaf);
+    const duration = 2400 + Math.random()*1400;
+    leaf.animate([
+      {transform: `translateY(0) rotate(${Math.random()*180}deg)`, opacity:1},
+      {transform: `translateY(${70+Math.random()*60}vh) rotate(${Math.random()*720}deg)`, opacity:0.2}
+    ], {duration:duration, easing:'cubic-bezier(.2,.9,.2,1)'});
+    setTimeout(()=>leaf.remove(), duration+200);
+  }
+}
+
+/* ---------- UI wiring ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const calcBtn = document.getElementById('calculate-btn');
+  const scanBtn = document.getElementById('scan-btn');
+
+  calcBtn.addEventListener('click', (ev)=>{
+    ev.preventDefault();
+    const freq = document.getElementById('frequency').value;
+    const cat = document.getElementById('category').value;
+    const plat = document.getElementById('platform').value;
+    if(!freq || !cat || !plat){ alert('Please select frequency, category and platform.'); return; }
+
+    // estimate
+    let base = frequencyScore[freq] || 1.0;
+    let cm = categoryMultiplier[cat] || 1.0;
+    let pm = platformMultiplier[plat] || 1.0;
+    let est = (base * cm * pm * 1.7) + (Math.random()-0.45)*1.6;
+    est = Math.max(0.4, Math.min(32, est));
+    est = +(est.toFixed(1));
+
+    // show result
+    document.getElementById('score-result').style.display='block';
+    animateNumber(document.getElementById('score-number'), 0, est, 900);
+
+    // phrase & compare
+    const phraseEl = document.getElementById('score-phrase');
+    let phrase = est < 2.5 ? "Low: small footprint vs typical shoppers." :
+                 est < 8 ? "Moderate: a few changes will make a big difference." :
+                 est < 14 ? "High: try targeted switches to cut emissions." :
+                 "Very high: consider immediate behavior & product changes.";
+    phraseEl.textContent = phrase;
+
+    const compareText = (est < 2.5) ? "Equivalent to planting a pocket forest over time." :
+                        (est < 8) ? "Comparable to replacing many short car rides with walks." :
+                        (est < 14) ? "Comparable to a long car trip yearly — walk when you can." :
+                        "Comparable to a major road trip annually; bold actions help.";
+    document.getElementById('score-compare').textContent = compareText;
+
+    // emotion line
+    document.getElementById('emotion-line').textContent = emotionLineFor(est);
+
+    // rank
+    const rank = Math.floor(8 + Math.random()*492);
+    document.getElementById('rank-line').textContent = `Your approximate city rank: #${rank}. Small changes can jump you forward.`;
+
+    // tips
+    const tips = chooseTips(cat);
+    const tipsList = document.getElementById('eco-tips'); tipsList.innerHTML='';
+    tips.forEach(t=>{
+      const li = document.createElement('li'); li.textContent = "• " + t; tipsList.appendChild(li);
+    });
+
+    // celebration for good scores
+    if(est < 2.5) launchLeaves(10);
+  });
+
+  /* product scanner (heuristic MVP) */
+  scanBtn.addEventListener('click', ()=>{
+    const link = document.getElementById('product-link').value.trim();
+    if(!link){ alert('Paste a product link to scan.'); return; }
+    const wrap = document.getElementById('eco-pilot-report');
+    const report = document.getElementById('product-report');
+    const alts = document.getElementById('product-alternatives');
+    const save = document.getElementById('carbon-save');
+    const talk = document.getElementById('talking-point');
+    wrap.style.display='none'; report.textContent=''; alts.innerHTML=''; save.textContent=''; talk.textContent='';
+
+    const l = link.toLowerCase();
+    let issues=[], alternatives=[], percent=0;
+    if(l.includes('polyester') || l.includes('poly') || l.includes('synthetic')){
+      issues.push('Synthetic fibers — microplastic shedding & oil-based production.');
+      issues.push('Likely long overseas supply chain.');
+      alternatives=['Organic cotton tee (local maker)','Certified recycled-fabric tee (regional brand)'];
+      percent = 45 + Math.floor(Math.random()*18);
+    } else if(l.includes('airfreight') || l.includes('express') || l.includes('overnight')){
+      issues.push('Air/express shipping detected — major emissions contributor.');
+      alternatives=['Choose standard shipping from local stock','Same product from domestic seller'];
+      percent = 22 + Math.floor(Math.random()*18);
+    } else if(l.includes('laptop') || l.includes('phone') || l.includes('electronics')){
+      issues.push('Electronics: high manufacturing & resource footprint.');
+      issues.push('Check repairability and battery lifecycle.');
+      alternatives=['Refurbished model with warranty','Locally assembled equivalent'];
+      percent = 18 + Math.floor(Math.random()*20);
+    } else {
+      issues.push('No clear metadata — we use human-curated heuristics for now.');
+      issues.push('Check materials, shipping origin, packaging, and return policy.');
+      alternatives=['Search same item from local marketplace','Look for certified sustainable vendor'];
+      percent = 10 + Math.floor(Math.random()*18);
+    }
+
+    // display
+    wrap.style.display='block';
+    document.getElementById('holo-spin').classList.add('animate');
+    report.innerHTML = "Key reasons flagged:<ul style='margin:6px 0 0 18px'>" + issues.map(i=>"<li>"+i+"</li>").join('') + "</ul>";
+    alts.innerHTML = ''; alternatives.forEach(a=>{ let li=document.createElement('li'); li.textContent="• "+a; alts.appendChild(li);});
+    save.textContent = `Estimated reduction if you pick an alternative: ~${percent}% lower emissions (MVP estimate).`;
+    talk.textContent = `I chose a local option and saved ~${percent}% estimated emissions — small choices stack.`;
+
+    // small confetti if big saving
+    if(percent > 30) setTimeout(()=>launchLeaves(18), 600);
+    setTimeout(()=>document.getElementById('holo-spin').classList.remove('animate'), 2200);
+  });
+
+});
+</script>
+</body>
+</html>
